@@ -1,0 +1,203 @@
+﻿@page
+@model FoodDeliveryAdminWebsite.views.Home.IndexModel
+
+@{
+    ViewData["Title"] = "Welcome - Food Delivery Admin";
+    Layout = "_Layout";
+}
+
+<div class="welcome-container">
+    <div class="welcome-header">
+        <h1>Welcome to Food Delivery Admin</h1>
+        <p class="lead">Manage your food delivery business efficiently</p>
+    </div>
+
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <a asp-controller="Restaurants" asp-action="Index" class="action-card">
+                <div class="action-icon">🍽️</div>
+                <h3>Restaurants</h3>
+                <p>Manage restaurant listings</p>
+            </a>
+
+            <a asp-controller="Orders" asp-action="Index" class="action-card">
+                <div class="action-icon">📦</div>
+                <h3>Orders</h3>
+                <p>View and process orders</p>
+            </a>
+
+            <a asp-controller="Menu" asp-action="Index" class="action-card">
+                <div class="action-icon">📋</div>
+                <h3>Menu Items</h3>
+                <p>Manage food menus</p>
+            </a>
+
+            <a asp-controller="Users" asp-action="Index" class="action-card">
+                <div class="action-icon">👥</div>
+                <h3>Users</h3>
+                <p>Manage system users</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h2>Recent Activity</h2>
+        <div class="activity-list">
+            <div class="activity-item">
+                <div class="activity-icon">🆕</div>
+                <div class="activity-content">
+                    <p><strong>5 new orders</strong> received in the last hour</p>
+                    <small class="text-muted">10 minutes ago</small>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">✅</div>
+                <div class="activity-content">
+                    <p><strong>12 orders</strong> were completed</p>
+                    <small class="text-muted">1 hour ago</small>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">🏪</div>
+                <div class="activity-content">
+                    <p><strong>Burger Palace</strong> updated their menu</p>
+                    <small class="text-muted">2 hours ago</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .welcome-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .welcome-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .welcome-header h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-header .lead {
+        font-size: 1.25rem;
+        color: var(--gray-500);
+    }
+
+    .quick-actions {
+        margin-bottom: 3rem;
+    }
+
+    .quick-actions h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: var(--gray-700);
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        color: var(--gray-700);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        color: var(--primary);
+    }
+
+    .action-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-card h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .action-card p {
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .recent-activity h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: var(--gray-700);
+    }
+
+    .activity-list {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .activity-item {
+        display: flex;
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        align-items: center;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .activity-content {
+        flex-grow: 1;
+    }
+
+    .activity-content p {
+        margin: 0;
+    }
+
+    .text-muted {
+        color: var(--gray-500);
+        font-size: 0.875rem;
+    }
+
+    @@media (max-width: 768px) {
+        .welcome-header h1 {
+            font-size: 2rem;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

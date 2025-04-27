@@ -1,0 +1,56 @@
+﻿@model List<Restaurant>
+@{
+    ViewData["Title"] = "Restaurants";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Restaurants</h2>
+        <a asp-action="Create" class="btn btn-primary">Add Restaurant</a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card-body">
+            <p>No restaurants found.</p>
+        </div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var restaurant in Model)
+                {
+                    <tr>
+                        <td>@restaurant.Name</td>
+                        <td>@restaurant.Address</td>
+                        <td>@restaurant.Phone</td>
+                        <td>
+                            @if (restaurant.IsActive)
+                            {
+                                <span class="badge badge-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@restaurant.Id" class="btn btn-sm btn-outline">Edit</a>
+                            <a asp-action="Details" asp-route-id="@restaurant.Id" class="btn btn-sm btn-outline">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

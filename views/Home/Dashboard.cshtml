@@ -1,0 +1,65 @@
+﻿@page
+@model FoodDeliveryAdminWebsite.views.Home.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value">@ViewBag.TotalOrders</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">$@ViewBag.TotalRevenue.ToString("N2")</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Restaurants</div>
+        <div class="stat-value">@ViewBag.ActiveRestaurants</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Pending Orders</div>
+        <div class="stat-value">@ViewBag.PendingOrders</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Recent Orders</h2>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-outline">View All</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Restaurant</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#10045</td>
+                <td>John Smith</td>
+                <td>Burger Palace</td>
+                <td>$24.99</td>
+                <td><span class="badge badge-success">Delivered</span></td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline">Details</a>
+                </td>
+            </tr>
+            <tr>
+                <td>#10044</td>
+                <td>Sarah Johnson</td>
+                <td>Pizza Heaven</td>
+                <td>$32.50</td>
+                <td><span class="badge badge-warning">Processing</span></td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline">Details</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

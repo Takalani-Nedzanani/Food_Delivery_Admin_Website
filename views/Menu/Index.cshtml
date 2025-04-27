@@ -1,0 +1,51 @@
+﻿@page
+@model FoodDeliveryAdminWebsite.views.Menu.IndexModel
+ List<MenuItem>
+@{
+    ViewData["Title"] = "Menu Items";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Menu Items</h2>
+        <a asp-action="Create" class="btn btn-primary">Add New Item</a>
+    </div>
+    <div class="card-body">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info">No menu items found.</div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Restaurant</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@(item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@item.Restaurant?.Name</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline">Edit</a>
+                                <form asp-action="Delete" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
