@@ -1,53 +1,79 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿//using FoodDeliveryAdminWebsite.Models;
+//using Microsoft.AspNetCore.Mvc;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
 
-public class OrdersController : Controller
-{
-    private static List<Order> _orders = new List<Order>
-    {
-        new Order {
-            Id = 10045,
-            CustomerName = "John Smith",
-            Restaurant = "Burger Palace",
-            Amount = 24.99m,
-            Status = "Delivered",
-            OrderDate = DateTime.Now.AddDays(-1)
-        },
-        new Order {
-            Id = 10044,
-            CustomerName = "Sarah Johnson",
-            Restaurant = "Pizza Heaven",
-            Amount = 32.50m,
-            Status = "Processing",
-            OrderDate = DateTime.Now.AddHours(-3)
-        }
-    };
+//public class OrdersController : Controller
+//{
+//    private readonly ApplicationDbContext _context;
 
-    public IActionResult Index()
-    {
-        // Explicitly pass the model to the view
-        return View(_orders);
-    }
+//    public OrdersController(ApplicationDbContext context)
+//    {
+//        _context = context;
+//    }
 
-    public IActionResult Details(int id)
-    {
-        var order = _orders.FirstOrDefault(o => o.Id == id);
-        if (order == null)
-        {
-            return NotFound();
-        }
-        return View(order);
-    }
-}
+//    [HttpGet]
+//    public IActionResult Details(int id)
+//    {
+//        var order = _context.Orders
+//            .Include(o => o.Restaurant)
+//            .Include(o => o.OrderItems)
+//                .ThenInclude(oi => oi.MenuItem)
+//            .FirstOrDefault(o => o.Id == id);
 
-public class Order
-{
-    public int Id { get; set; }
-    public string CustomerName { get; set; }
-    public string Restaurant { get; set; }
-    public decimal Amount { get; set; }
-    public string Status { get; set; }
-    public DateTime OrderDate { get; set; }
-}
+//        if (order == null)
+//        {
+//            return NotFound();
+//        }
+
+//        return View(order);
+//    }
+
+//    [HttpGet]
+//    public IActionResult Process(int id)
+//    {
+//        var order = _context.Orders
+//            .Include(o => o.Restaurant)
+//            .Include(o => o.OrderItems)
+//            .FirstOrDefault(o => o.Id == id);
+
+//        if (order == null)
+//        {
+//            return NotFound();
+//        }
+
+//        return View(order);
+//    }
+
+//    [HttpPost]
+//    public IActionResult Process(Order model)
+//    {
+//        if (ModelState.IsValid)
+//        {
+//            var order = _context.Orders.Find(model.Id);
+//            if (order == null)
+//            {
+//                return NotFound();
+//            }
+
+//            order.Status = model.Status;
+//            order.AssignedDriver = model.AssignedDriver;
+//            order.EstimatedDeliveryTime = model.EstimatedDeliveryTime;
+//            order.AdminNotes = model.AdminNotes;
+
+//            _context.SaveChanges();
+
+//            return RedirectToAction("Details", new { id = model.Id });
+//        }
+
+//        // Reload related data if validation fails
+//        model.Restaurant = _context.Restaurants.Find(model.RestaurantId);
+//        model.OrderItems = _context.OrderItems
+//            .Where(oi => oi.OrderId == model.Id)
+//            .Include(oi => oi.MenuItem)
+//            .ToList();
+
+//        return View(model);
+//    }
+//}

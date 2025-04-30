@@ -1,0 +1,135 @@
+﻿@page
+
+@model FoodDeliveryAdminWebsite.Models.Order
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Order #@Model.Id</h2>
+        <div class="status-badge">
+            @if (Model.Status == "Delivered")
+            {
+                <span class="badge badge-success">@Model.Status</span>
+            }
+            else if (Model.Status == "Processing")
+            {
+                <span class="badge badge-warning">@Model.Status</span>
+            }
+            else
+            {
+                <span class="badge badge-danger">@Model.Status</span>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Order Information</h4>
+                <dl class="row">
+                    <dt class="col-sm-4">Order Date</dt>
+                    <dd class="col-sm-8">@Model.OrderDate.ToString("f")</dd>
+
+                    <dt class="col-sm-4">Customer</dt>
+                    <dd class="col-sm-8">@Model.CustomerName</dd>
+
+                    <dt class="col-sm-4">Contact</dt>
+                    <dd class="col-sm-8">@Model.CustomerPhone</dd>
+
+                    <dt class="col-sm-4">Delivery Address</dt>
+                    <dd class="col-sm-8">@Model.DeliveryAddress</dd>
+
+                    <dt class="col-sm-4">Payment Method</dt>
+                    <dd class="col-sm-8">@Model.PaymentMethod</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <h4>Restaurant Information</h4>
+                <dl class="row">
+                    <dt class="col-sm-4">Restaurant</dt>
+                    <dd class="col-sm-8">@Model.Restaurant.Name</dd>
+
+                    <dt class="col-sm-4">Restaurant Address</dt>
+                    <dd class="col-sm-8">@Model.Restaurant.Address</dd>
+
+                    <dt class="col-sm-4">Restaurant Phone</dt>
+                    <dd class="col-sm-8">@Model.Restaurant.Phone</dd>
+                </dl>
+            </div>
+        </div>
+
+        <h4 class="mt-4">Order Items</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <tr>
+                        <td>@item.MenuItem.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" class="text-right">Subtotal:</th>
+                    <th>@Model.Subtotal.ToString("C")</th>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-right">Delivery Fee:</th>
+                    <th>@Model.DeliveryFee.ToString("C")</th>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-right">Total:</th>
+                    <th>@Model.TotalAmount.ToString("C")</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="mt-4">
+            <h4>Order Notes</h4>
+            <div class="order-notes">
+                @if (string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <p class="text-muted">No special instructions</p>
+                }
+                else
+                {
+                    <p>@Model.Notes</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" class="btn btn-outline">Back to Orders</a>
+        <a asp-action="Process" asp-route-id="@Model.Id" class="btn btn-primary">Process Order</a>
+    </div>
+</div>
+
+<style>
+    .status-badge {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+    
+    .order-notes {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        border-left: 4px solid var(--primary);
+    }
+    
+    dt {
+        font-weight: 500;
+    }
+</style>

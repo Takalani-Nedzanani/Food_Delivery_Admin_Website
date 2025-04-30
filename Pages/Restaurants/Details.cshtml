@@ -1,0 +1,113 @@
+﻿@page
+
+@model Restaurant
+@{
+    ViewData["Title"] = "Restaurant Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">@Model.Name</h2>
+        <div class="status-badge">
+            @if (Model.IsActive)
+            {
+                <span class="badge badge-success">Active</span>
+            }
+            else
+            {
+                <span class="badge badge-danger">Inactive</span>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="restaurant-image mb-4">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 300px;" />
+                    }
+                    else
+                    {
+                        <div class="no-image-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">No image available</span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Contact Information</h4>
+                <dl class="row">
+                    <dt class="col-sm-4">Address</dt>
+                    <dd class="col-sm-8">@Model.Address</dd>
+
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">@Model.Phone</dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Email) ? "N/A" : Model.Email)</dd>
+
+                    <dt class="col-sm-4">Website</dt>
+                    <dd class="col-sm-8">
+                        @if (!string.IsNullOrEmpty(Model.Website))
+                        {
+                            <a href="@Model.Website" target="_blank">@Model.Website</a>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </dd>
+                </dl>
+
+                <h4 class="mt-4">Operating Hours</h4>
+                <dl class="row">
+                    <dt class="col-sm-4">Monday - Friday</dt>
+                    <dd class="col-sm-8">@Model.OpeningHoursWeekdays</dd>
+
+                    <dt class="col-sm-4">Weekends</dt>
+                    <dd class="col-sm-8">@Model.OpeningHoursWeekends</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="restaurant-description mt-4">
+            <h4>Description</h4>
+            <div class="description-content p-3 bg-light rounded">
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    @Model.Description
+                }
+                else
+                {
+                    <span class="text-muted">No description provided</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-outline">Back to List</a>
+    </div>
+</div>
+
+<style>
+    .status-badge {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+    
+    .no-image-placeholder {
+        border: 1px dashed #dee2e6;
+        border-radius: 0.25rem;
+    }
+    
+    .description-content {
+        border-left: 4px solid var(--primary);
+    }
+    
+    dt {
+        font-weight: 500;
+        color: var(--gray-600);
+    }
+</style>

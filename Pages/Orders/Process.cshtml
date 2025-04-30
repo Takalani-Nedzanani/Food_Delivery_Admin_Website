@@ -1,0 +1,119 @@
+﻿@page
+@model FoodDeliveryAdminWebsite.Models.Order
+
+@{
+    ViewData["Title"] = "Process Order";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Process Order #@Model.Id</h2>
+        <div class="status-badge">
+            Current Status: 
+            @if (Model.Status == "Delivered")
+            {
+                <span class="badge badge-success">@Model.Status</span>
+            }
+            else if (Model.Status == "Processing")
+            {
+                <span class="badge badge-warning">@Model.Status</span>
+            }
+            else
+            {
+                <span class="badge badge-danger">@Model.Status</span>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-action="Process" method="post">
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Update Status</label>
+                <select asp-for="Status" class="form-control">
+                    <option value="Received">Received</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Ready">Ready for Delivery</option>
+                    <option value="OnTheWay">On the Way</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="AssignedDriver" class="form-label">Assign Driver (optional)</label>
+                <input asp-for="AssignedDriver" class="form-control" />
+                <span asp-validation-for="AssignedDriver" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="EstimatedDeliveryTime" class="form-label">Estimated Delivery Time</label>
+                <input asp-for="EstimatedDeliveryTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="EstimatedDeliveryTime" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="AdminNotes" class="form-label">Admin Notes</label>
+                <textarea asp-for="AdminNotes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AdminNotes" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Update Order</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+        
+        <div class="order-summary mt-5">
+            <h4>Order Summary</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Customer:</strong> @Model.CustomerName</p>
+                    <p><strong>Items:</strong> @Model.OrderItems.Sum(i => i.Quantity)</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Restaurant:</strong> @Model.Restaurant.Name</p>
+                    <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Set the current status as selected
+        document.getElementById('Status').value = '@Model.Status';
+        
+        // Initialize datetime picker with current time + 30 minutes
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 30);
+            const datetimeStr = now.toISOString().slice(0, 16);
+            document.getElementById('EstimatedDeliveryTime').value = datetimeStr;
+        });
+    </script>
+}
+
+<style>
+    .status-badge {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+    
+    .order-summary {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .order-summary h4 {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>
