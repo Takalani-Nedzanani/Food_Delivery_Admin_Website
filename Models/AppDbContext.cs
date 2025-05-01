@@ -19,10 +19,10 @@ namespace FoodDeliveryAdminWebsite.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<OrderItem>()
-                //.HasOne(oi => oi.Order)
-                //.WithMany(o => o.Items)
-                //.HasForeignKey(oi => oi.OrderId);
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId);
 
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.MenuItem)

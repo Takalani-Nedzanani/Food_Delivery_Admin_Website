@@ -1,10 +1,6 @@
 ﻿using FoodDeliveryAdminWebsite.Models;
 using System.ComponentModel.DataAnnotations;
 
-using System;
-using System.Collections.Generic;
-
-
 namespace FoodDeliveryAdminWebsite.Models
 {
     public class MenuItem

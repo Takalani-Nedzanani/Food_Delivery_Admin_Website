@@ -83,19 +83,15 @@ namespace FoodDeliveryAdminWebsite.Controllers
         private string CreateToken(User user)
         {
             var claims = new List<Claim>
-           {
-               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.Name),
-               new Claim(ClaimTypes.Email, user.Email)
-           };
-
-            var tokenKey = _configuration.GetSection("AppSettings:Token").Value;
-            if (string.IsNullOrEmpty(tokenKey))
             {
-                throw new InvalidOperationException("Token key is not configured in AppSettings.");
-            }
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _configuration.GetSection("AppSettings:Token").Value));
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -114,16 +110,16 @@ namespace FoodDeliveryAdminWebsite.Controllers
 
     public class LoginDto
     {
-        public required string Email { get; set; }
-        public required string Password { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 
     public class RegisterDto
     {
-        public required string Name { get; set; }
-        public required string Email { get; set; }
-        public required string Phone { get; set; }
-        public required string Address { get; set; }
-        public  required string Password { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public string Password { get; set; }
     }
 }
