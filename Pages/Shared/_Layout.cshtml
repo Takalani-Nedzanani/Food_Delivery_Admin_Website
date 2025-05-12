@@ -1,4 +1,108 @@
-﻿<!DOCTYPE html> 
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Food Delivery Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FoodDeliveryAdminWebsite.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-page="/Index">Food Delivery Admin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Dashboard Link -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-page="/Index">Dashboard</a>
+                        </li>
+
+                        <!-- Orders Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-light dropdown-toggle" href="#" id="ordersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Orders
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="ordersDropdown">
+                                <li><a class="dropdown-item" asp-page="/Orders/Index">View All Orders</a></li>
+                                <!-- Add more order-related pages here if needed -->
+                            </ul>
+                        </li>
+
+                        <!-- Menu Items Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-light dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Menu Items
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                <li><a class="dropdown-item" asp-page="/MenuItems/Index">View All Items</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-page="/MenuItems/Create">Add New Item</a></li>
+                                <!-- Edit/Delete links would be context-specific and not in main nav -->
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <!-- Right-aligned nav items -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="#">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="#">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            <!-- Display temporary messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+
+   @*  <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Food Delivery Admin
+        </div>
+    </footer> *@
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+@* <!DOCTYPE html> 
  <html lang="en"> 
  <head> 
     <meta charset="utf-8" /> 
@@ -42,114 +146,68 @@
    @*    </div>  *@
    @*   </footer>  *@
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>  
+   @*  <script src="~/lib/jquery/dist/jquery.min.js"></script>  
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> 
   <script src="~/js/site.js" asp-append-version="true"></script> 
 
    @await RenderSectionAsync("Scripts", required: false) 
 </body> 
- </html>
-
-
-
-@* <!DOCTYPE html> *@
-@* <html lang="en"> *@
-@* <head> *@
-@*     <meta charset="utf-8" /> *@
-@*     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> *@
-@*     <title>@ViewData["Title"] - FoodDeliveryAdmin</title> *@
-@*     <link href="~/css/app.css" rel="stylesheet" /> *@
-@* </head> *@
-@* <body> *@
-@*     <div class="min-h-screen bg-gray-100"> *@
-@*         <nav class="bg-white shadow-sm"> *@
-@*             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> *@
-@*                 <div class="flex justify-between h-16"> *@
-@*                     <div class="flex"> *@
-@*                         <div class="flex-shrink-0 flex items-center"> *@
-@*                             <span class="text-xl font-bold text-orange-500">Food Delivery Admin</span> *@
-@*                         </div> *@
-@*                     </div> *@
-@*                 </div> *@
-@*             </div> *@
-@*         </nav> *@
-
-@*         <div class="py-10"> *@
-@*             <main> *@
-@*                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> *@
-@*                     @RenderBody() *@
-@*                 </div> *@
-@*             </main> *@
-@*         </div> *@
-@*     </div> *@
-
-@*     @await RenderSectionAsync("Scripts", required: false) *@
-@* </body> *@
-@* </html> *@
-
-
-
-@* <!DOCTYPE html> *@
-@* <html lang="en"> *@
-@* <head> *@
-@*     <meta charset="utf-8" /> *@
-@*     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> *@
-@*     <title>@ViewData["Title"] - Food Delivery Admin</title> *@
-@*     <link rel="stylesheet" href="~/css/site.css" /> *@
-@* </head> *@
-@* <body> *@
-@*     <div class="admin-container"> *@
-@*         <aside class="sidebar"> *@
-@*             <div class="logo">FoodDelivery</div> *@
-@*             <nav class="nav-menu"> *@
-@*                 <ul> *@
-@*                     <li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "active" : "")"> *@
-@*                         <a asp-controller="Home" asp-action="Dashboard"> *@
-@*                             <i class="icon">📊</i> Dashboard *@
-@*                         </a> *@
-@*                     </li> *@
-@*                     <li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Restaurants" ? "active" : "")"> *@
-@*                         <a asp-controller="Restaurants" asp-action="Index"> *@
-@*                             <i class="icon">🍽️</i> Restaurants *@
-@*                         </a> *@
-@*                     </li> *@
-@*                     <li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Orders" ? "active" : "")"> *@
-@*                         <a asp-controller="Orders" asp-action="Index"> *@
-@*                             <i class="icon">📦</i> Orders *@
-@*                         </a> *@
-@*                     </li> *@
-@*                     <li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Menu" ? "active" : "")"> *@
-@*                         <a asp-controller="Menu" asp-action="Index"> *@
-@*                             <i class="icon">📋</i> Menu Items *@
-@*                         </a> *@
-@*                     </li> *@
-@*                     <li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")"> *@
-@*                         <a asp-controller="Users" asp-action="Index"> *@
-@*                             <i class="icon">👤</i> Users *@
-@*                         </a> *@
-@*                     </li> *@
-@*                 </ul> *@
-@*             </nav> *@
-@*         </aside> *@
-
-@*         <main class="main-content"> *@
-@*             <header class="top-bar"> *@
-@*                 <div class="user-info"> *@
-@*                     <span>Admin User</span> *@
-@*                     <div class="avatar">AD</div> *@
-@*                 </div> *@
-@*             </header> *@
-
-@*             <div class="content-wrapper"> *@
-@*                 @RenderBody() *@
-@*             </div> *@
-@*         </main> *@
-@*     </div> *@
-
-@*     @RenderSection("Scripts", required: false) *@
-@* </body> *@
-@* </html> *@
+ </html> *@
 
 
 
 
+
+
+@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Food Order Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FoodOrderAdmin.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-page="/Index">Food Order Admin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-page="/Orders/Index">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-page="/MenuItems/Index">Menu Items</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Food Order Admin
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@

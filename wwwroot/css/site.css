@@ -311,3 +311,44 @@ body {
         flex-direction: column;
     }
 }
+
+/* Custom styles */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.status-pending {
+    color: #ffc107;
+}
+
+.status-preparing {
+    color: #fd7e14;
+}
+
+.status-ready {
+    color: #28a745;
+}
+
+.status-collected {
+    color: #6c757d;
+}
+
+
+$(document).ready(function() {
+    const path = window.location.pathname;
+    $('.nav-link').each(function() {
+        const href = $(this).attr('href');
+        if (path.includes(href) && href !== '/') {
+            $(this).addClass('active');
+            $(this).closest('.dropdown').find('.dropdown-toggle').addClass('active');
+        }
+    });
+});

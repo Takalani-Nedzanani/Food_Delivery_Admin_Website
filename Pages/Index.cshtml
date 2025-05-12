@@ -1,4 +1,115 @@
 ﻿@page
+@model FoodDeliveryAdminWebsite.Pages.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <h1>Admin Dashboard</h1>
+
+    <div class="row mb-4">
+        <div class="col">
+            <a asp-page="/MenuItems/Create" class="btn btn-primary">Add New Menu Item</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Orders</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Time</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id.Substring(0, 8)</td>
+                                <td>@order.UserName</td>
+                                <td>@order.Timestamp.ToString("g")</td>
+                                <td>@order.ItemCount</td>
+                                <td>@order.Total.ToString("C")</td>
+                                <td>@order.Status</td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus">
+                                        <input type="hidden" asp-for="SelectedOrderId" value="@order.Id" />
+                                        <select asp-for="NewStatus" class="form-select form-select-sm">
+                                            <option value="pending" selected="@(order.Status == "pending")">Pending</option>
+                                            <option value="preparing" selected="@(order.Status == "preparing")">Preparing</option>
+                                            <option value="ready" selected="@(order.Status == "ready")">Ready</option>
+                                            <option value="collected" selected="@(order.Status == "collected")">Collected</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Menu Items</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MenuItems)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Description</td>
+                                <td>@item.Price.ToString("C")</td>
+                                <td>@item.Category</td>
+                                <td>
+                                    <a asp-page="/MenuItems/Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                                    <form method="post" asp-page-handler="DeleteMenuItem" class="d-inline">
+                                        <input type="hidden" asp-for="ItemToDeleteId" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure you want to delete this menu item?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@* @page
 @model IndexModel
 @{
     ViewData["Title"] = "Welcome - Food Delivery Admin";
@@ -199,4 +310,4 @@
             grid-template-columns: 1fr;
         }
     }
-</style>
+</style> *@

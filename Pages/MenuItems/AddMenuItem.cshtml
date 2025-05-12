@@ -1,0 +1,59 @@
+﻿@page
+@model FoodDeliveryAdminWebsite.Pages.MenuItems.AddMenuItemModel
+@{
+    ViewData["Title"] = "Add Menu Item";
+}
+
+<h1>Add Menu Item</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="MenuItem.Name" class="control-label"></label>
+                <input asp-for="MenuItem.Name" class="form-control" />
+                <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MenuItem.Description" class="control-label"></label>
+                <textarea asp-for="MenuItem.Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="MenuItem.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MenuItem.Price" class="control-label"></label>
+                <input asp-for="MenuItem.Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="MenuItem.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MenuItem.Category" class="control-label"></label>
+                <select asp-for="MenuItem.Category" class="form-control"
+                        asp-items="@(new SelectList(Model.Categories))">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="MenuItem.Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MenuItem.ImageUrl" class="control-label"></label>
+                <input asp-for="MenuItem.ImageUrl" class="form-control" />
+                <span asp-validation-for="MenuItem.ImageUrl" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

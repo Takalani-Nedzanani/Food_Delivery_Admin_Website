@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FoodDeliveryAdminWebsite.Models;
+
 using System;
 
 namespace FoodDeliveryAdminWebsite
@@ -20,9 +20,7 @@ namespace FoodDeliveryAdminWebsite
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+          
             services.AddControllersWithViews();
 
             // Add CORS policy for development
