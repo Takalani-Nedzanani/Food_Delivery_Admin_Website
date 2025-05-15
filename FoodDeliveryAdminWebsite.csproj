@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
     <Folder Include="wwwroot\lib\tailwind\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>

@@ -4,12 +4,48 @@
     ViewData["Title"] = "Menu Items Management";
 }
 
+<style>
+
+    .btn-outline-orange {
+        color: #e65100;
+        border-color: #e65100;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-orange:hover {
+            background-color: #e65100;
+            color: #fff;
+            border-color: #e65100;
+        }
+
+
+    .btn-orange {
+        background-color: #e65100 !important;
+        border-color: #e65100 !important;
+        color: #fff !important;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+        .btn-orange:hover {
+            background-color: #bf360c !important;
+            border-color: #bf360c !important;
+            color: #fff !important;
+        }
+
+
+
+</style>
+
+
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Menu Items Management</h1>
         <div>
-            <a asp-page="/Index" class="btn btn-outline-primary me-2">Back to Dashboard</a>
-            <a asp-page="Create" class="btn btn-success">Add New Item</a>
+            <a asp-page="/Index" class="btn btn-outline-primary btn-outline-orange me-2">Back to Dashboard</a>
+
+            <a asp-page="Create" class="btn btn-orange">Add New Item</a>
+
         </div>
     </div>
 

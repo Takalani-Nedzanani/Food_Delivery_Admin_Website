@@ -23,5 +23,7 @@ namespace FoodDeliveryAdminWebsite.services
 
             public FirebaseClient GetClient() => _firebase;
         }
+
+
    
 }

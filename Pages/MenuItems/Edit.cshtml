@@ -4,6 +4,134 @@
     ViewData["Title"] = "Edit Menu Item";
 }
 
+<style>
+    body {
+        background: url('https://auspost.com.au/content/dam/corp/travel-essentials/destination-guides/italy/photo-antipasto-platter-italian-food.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+    }
+
+    .bg-overlay {
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(6px);
+        min-height: 100vh;
+    }
+
+    .card-glass {
+        background-color: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .form-label,
+    .form-control::placeholder,
+    .text-dark {
+        color: #ffffff !important;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+    .btn-primary {
+        background-color: #e65100;
+        border: none;
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background-color: #bf360c;
+        }
+
+    .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+    }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+</style>
+
+<div class="d-flex justify-content-center align-items-center bg-overlay">
+    <div class="card card-glass shadow-lg rounded-4 border-0 p-4 my-5" style="width: 100%; max-width: 500px;">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-white mb-1">Edit Menu Item</h3>
+            <p class="text-muted mb-0">Update the details below</p>
+        </div>
+
+        <form method="post">
+            <input type="hidden" asp-for="Input.Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Name" class="form-label fw-semibold">Name</label>
+                <input asp-for="Input.Name" class="form-control rounded-pill px-3" />
+                <span asp-validation-for="Input.Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Description" class="form-label fw-semibold">Description</label>
+                <textarea asp-for="Input.Description" class="form-control rounded-4 px-3" rows="3"></textarea>
+                <span asp-validation-for="Input.Description" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Price" class="form-label fw-semibold">Price</label>
+                <input asp-for="Input.Price" class="form-control rounded-pill px-3" type="number" step="0.01" />
+                <span asp-validation-for="Input.Price" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Category" class="form-label fw-semibold">Category</label>
+                <select asp-for="Input.Category"
+                        class="form-select rounded-pill px-3 bg-black text-white"
+                        asp-items="@(new SelectList(Model.Categories))">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="Input.Category" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Input.ImageUrl" class="form-label fw-semibold">Image URL</label>
+                <input asp-for="Input.ImageUrl" class="form-control rounded-pill px-3" />
+                <span asp-validation-for="Input.ImageUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold">Save Changes</button>
+                <a asp-page="../Index" class="btn btn-secondary rounded-pill py-2 fw-semibold">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @* @await Html.RenderPartialAsync("_ValidationScriptsPartial") *@
+}
+
+
+
+
+
+
+@* @page "{id}"
+@model FoodDeliveryAdminWebsite.Pages.MenuItems.EditModel
+@{
+    ViewData["Title"] = "Edit Menu Item";
+}
+
 <h1>Edit Menu Item</h1>
 
 <div class="row">
@@ -57,4 +185,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}
+} *@

@@ -4,6 +4,299 @@
     ViewData["Title"] = "Orders Management";
 }
 
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">🧾 Orders Management</h2>
+        <a asp-page="/Index" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-nowrap">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date/Time</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td><span class="fw-semibold text-primary">@order.Id.Substring(0, 8)</span></td>
+                                <td>@order.UserEmail</td>
+                                <td>@order.Timestamp.ToString("g")</td>
+                                <td>
+                                    <ul class="mb-0 ps-3 small">
+                                        @foreach (var item in order.ItemDetails)
+                                        {
+                                            <li>@item.Name (x@(item.Quantity > 0 ? item.Quantity : 1))</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td><span class="fw-semibold">@order.Total.ToString("C")</span></td>
+                                <td>
+                                    <span class="badge rounded-pill
+                                        @(order.Status == "pending" ? "bg-warning text-dark" :
+                                          order.Status == "preparing" ? "bg-info text-dark" :
+                                          order.Status == "ready" ? "bg-success" :
+                                          order.Status == "collected" ? "bg-secondary" : "bg-light text-dark")">
+                                        @order.Status.ToUpper()
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="SelectedOrderId" value="@order.Id" />
+                                        <select name="NewStatus" class="form-select form-select-sm w-auto">
+                                            <option value="pending" selected="@(order.Status == "pending")">Pending</option>
+                                            <option value="preparing" selected="@(order.Status == "preparing")">Preparing</option>
+                                            <option value="ready" selected="@(order.Status == "ready")">Ready</option>
+                                            <option value="collected" selected="@(order.Status == "collected")">Collected</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+@* @page
+@model FoodDeliveryAdminWebsite.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Orders Management";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Orders Management</h1>
+        <a asp-page="/Index" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date/Time</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id.Substring(0, 8)</td>
+                                <td>@order.UserEmail</td>
+                                <td>@order.Timestamp.ToString("g")</td>
+                                <td>
+                                    <ul class="mb-0 ps-3">
+                                        @foreach (var item in order.ItemDetails)
+                                        {
+                                            <li>@item.Name (x@(item.Quantity > 0 ? item.Quantity : 1))</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>@order.Total.ToString("C")</td>
+                                <td>
+                                    <span class="badge
+                                        @(order.Status == "pending" ? "bg-warning text-dark" :
+                                          order.Status == "preparing" ? "bg-info text-dark" :
+                                          order.Status == "ready" ? "bg-success" :
+                                          order.Status == "collected" ? "bg-secondary" : "bg-light text-dark")">
+                                        @order.Status.ToUpper()
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus" class="d-flex gap-2">
+                                        <input type="hidden" name="SelectedOrderId" value="@order.Id" />
+                                        <select name="NewStatus" class="form-select form-select-sm">
+                                            <option value="pending" selected="@(order.Status == "pending")">Pending</option>
+                                            <option value="preparing" selected="@(order.Status == "preparing")">Preparing</option>
+                                            <option value="ready" selected="@(order.Status == "ready")">Ready</option>
+                                            <option value="collected" selected="@(order.Status == "collected")">Collected</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+ *@
+
+
+
+
+
+
+
+
+
+@* @page
+@model FoodDeliveryAdminWebsite.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Orders Management";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Orders Management</h1>
+        <a asp-page="/Index" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date/Time</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id.Substring(0, 8)</td>
+                                <td>@order.UserName</td>
+                                <td>@order.Timestamp.ToString("g")</td>
+                                <td>
+                                    <ul class="mb-0 ps-3">
+                                        @foreach (var item in order.ItemDetails)
+                                        {
+                                            <li>@item.Name (x@(item.Quantity > 0 ? item.Quantity : 1))</li>
+
+                                        }
+                                    </ul>
+                                </td>
+                                <td>@order.Total.ToString("C")</td>
+                                <td>
+                                    <span class="badge
+                                        @(order.Status == "pending" ? "bg-warning text-dark" :
+                                          order.Status == "preparing" ? "bg-info text-dark" :
+                                          order.Status == "ready" ? "bg-success" :
+                                          order.Status == "collected" ? "bg-secondary" : "bg-light text-dark")">
+                                        @order.Status.ToUpper()
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus" class="d-flex gap-2">
+                                        <input type="hidden" name="SelectedOrderId" value="@order.Id" />
+                                        <select name="NewStatus" class="form-select form-select-sm">
+                                            <option value="pending" selected="@(order.Status == "pending")">Pending</option>
+                                            <option value="preparing" selected="@(order.Status == "preparing")">Preparing</option>
+                                            <option value="ready" selected="@(order.Status == "ready")">Ready</option>
+                                            <option value="collected" selected="@(order.Status == "collected")">Collected</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+
+
+
+
+
+
+
+
+
+
+@* @page
+@model FoodDeliveryAdminWebsite.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Orders Management";
+}
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Orders Management</h1>
@@ -77,3 +370,4 @@
         </div>
     </div>
 </div>
+ *@
