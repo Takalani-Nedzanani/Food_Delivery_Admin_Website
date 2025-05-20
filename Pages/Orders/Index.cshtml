@@ -4,12 +4,60 @@
     ViewData["Title"] = "Orders Management";
 }
 
+
+<style>
+
+    .btn-outline-orange {
+        color: #e65100;
+        border-color: #e65100;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-orange:hover {
+            background-color: #e65100;
+            color: #fff;
+            border-color: #e65100;
+        }
+
+
+
+    .btn-outline-orange {
+        color: #e65100;
+        border-color: #e65100;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-orange:hover {
+            background-color: #e65100;
+            color: #fff;
+            border-color: #e65100;
+        }
+
+
+
+
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">🧾 Orders Management</h2>
-        <a asp-page="/Index" class="btn btn-outline-primary">
+        <a asp-page="/Index" class="btn btn-outline-orange">
             <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
         </a>
+
     </div>
 
     @if (TempData["SuccessMessage"] != null)
@@ -76,7 +124,8 @@
                                             <option value="ready" selected="@(order.Status == "ready")">Ready</option>
                                             <option value="collected" selected="@(order.Status == "collected")">Collected</option>
                                         </select>
-                                        <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-orange">Update</button>
+
                                     </form>
                                 </td>
                             </tr>

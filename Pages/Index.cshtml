@@ -2,9 +2,11 @@
 @model FoodDeliveryAdminWebsite.Pages.IndexModel
 @{
     ViewData["Title"] = "Admin Dashboard";
+    var totalOrders = Model.Orders?.Count() ?? 0;
+    var confirmedOrders = Model.Orders?.Count(o => o.Status == "collected") ?? 0;
 }
 
-<div class="container">
+<div class="container mt-4">
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -14,205 +16,151 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 
-    <h1>Admin Dashboard</h1>
-
-    <div class="row mb-4">
-        <div class="col">
-            <a asp-page="/MenuItems/Create" class="btn btn-primary">Add New Menu Item</a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h2>Orders</h2>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Time</th>
-                            <th>Items</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model.Orders)
-                        {
-                            <tr>
-                                <td>@order.Id.Substring(0, 8)</td>
-                                <td>@order.UserName</td>
-                                <td>@order.Timestamp.ToString("g")</td>
-                                <td>@order.ItemCount</td>
-                                <td>@order.Total.ToString("C")</td>
-                                <td>@order.Status</td>
-                                <td>
-                                    <form method="post" asp-page-handler="UpdateStatus">
-                                        <input type="hidden" asp-for="SelectedOrderId" value="@order.Id" />
-                                        <select asp-for="NewStatus" class="form-select form-select-sm">
-                                            <option value="pending" selected="@(order.Status == "pending")">Pending</option>
-                                            <option value="preparing" selected="@(order.Status == "preparing")">Preparing</option>
-                                            <option value="ready" selected="@(order.Status == "ready")">Ready</option>
-                                            <option value="collected" selected="@(order.Status == "collected")">Collected</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <h2>Menu Items</h2>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Category</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.MenuItems)
-                        {
-                            <tr>
-                                <td>@item.Name</td>
-                                <td>@item.Description</td>
-                                <td>@item.Price.ToString("C")</td>
-                                <td>@item.Category</td>
-                                <td>
-                                    <a asp-page="/MenuItems/Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                                    <form method="post" asp-page-handler="DeleteMenuItem" class="d-inline">
-                                        <input type="hidden" asp-for="ItemToDeleteId" value="@item.Id" />
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this menu item?')">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-@* @page
-@model IndexModel
-@{
-    ViewData["Title"] = "Welcome - Food Delivery Admin";
-    Layout = "_Layout";
-}
-
-<div class="welcome-container">
-    <div class="welcome-header">
+    <div class="welcome-header text-center mb-5">
         <h1>Welcome to Food Delivery Admin</h1>
         <p class="lead">Manage your food delivery business efficiently</p>
     </div>
 
-    <div class="quick-actions">
-        <h2>Quick Actions</h2>
-        <div class="action-grid">
-            <a asp-controller="Restaurants" asp-action="Index" class="action-card">
-                <div class="action-icon">🍽️</div>
-                <h3>Restaurants</h3>
-                <p>Manage restaurant listings</p>
-            </a>
-
-            <a asp-controller="Orders" asp-action="Index" class="action-card">
-                <div class="action-icon">📦</div>
-                <h3>Orders</h3>
-                <p>View and process orders</p>
-            </a>
-
-            <a asp-controller="Menu" asp-action="Index" class="action-card">
-                <div class="action-icon">📋</div>
-                <h3>Menu Items</h3>
-                <p>Manage food menus</p>
-            </a>
-
-            <a asp-controller="Users" asp-action="Index" class="action-card">
-                <div class="action-icon">👥</div>
-                <h3>Users</h3>
-                <p>Manage system users</p>
-            </a>
+    <!-- Dashboard Summary -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-orange hover-orange mb-3">
+                <div class="card-body text-orange">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text display-6 fw-bold">@totalOrders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-orange hover-orange mb-3">
+                <div class="card-body text-orange">
+                    <h5 class="card-title">Confirmed Orders</h5>
+                    <p class="card-text display-6 fw-bold">@confirmedOrders</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="recent-activity">
+
+
+
+
+    <!-- Recent Activity -->
+    <div class="recent-activity mb-5">
         <h2>Recent Activity</h2>
         <div class="activity-list">
             <div class="activity-item">
                 <div class="activity-icon">🆕</div>
                 <div class="activity-content">
-                    <p><strong>5 new orders</strong> received in the last hour</p>
-                    <small class="text-muted">10 minutes ago</small>
+                    <p><strong>@Model.RecentConfirmedOrders.Count</strong> orders confirmed in the last hour</p>
+                    <small class="text-muted">
+                        @if (Model.RecentConfirmedOrders.Any())
+                        {
+                            <text>Last confirmed @Model.RecentConfirmedOrders.First().Timestamp.ToLocalTime().ToString("HH:mm")</text>
+                        }
+                        else
+                        {
+                            <text>No recent confirmations</text>
+                        }
+                    </small>
                 </div>
             </div>
 
             <div class="activity-item">
                 <div class="activity-icon">✅</div>
                 <div class="activity-content">
-                    <p><strong>12 orders</strong> were completed</p>
-                    <small class="text-muted">1 hour ago</small>
+                    <p><strong>@Model.Orders.Count(o => o.Status == "collected")</strong> total orders completed</p>
+                    <small class="text-muted">Updated now</small>
                 </div>
             </div>
 
             <div class="activity-item">
-                <div class="activity-icon">🏪</div>
+                <div class="activity-icon">📦</div>
                 <div class="activity-content">
-                    <p><strong>Burger Palace</strong> updated their menu</p>
-                    <small class="text-muted">2 hours ago</small>
+                    <p><strong>@Model.MenuItems.Count</strong> menu items available</p>
+                    <small class="text-muted">Menu last loaded @DateTime.Now.ToString("HH:mm")</small>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <!-- Order Trends Chart -->
+    <div class="order-graph-section mb-5">
+        <h2>Order Trends</h2>
+        <canvas id="ordersChart" width="400" height="200"></canvas>
+    </div>
+
+
+
+
+    
 </div>
 
+<script>
+    // Prepare data from server
+    const chartLabels = @Html.Raw(Json.Serialize(Model.OrdersPerDay.Keys));
+    const totalOrdersData = @Html.Raw(Json.Serialize(Model.OrdersPerDay.Values.Select(v => v.Total)));
+    const confirmedOrdersData = @Html.Raw(Json.Serialize(Model.OrdersPerDay.Values.Select(v => v.Confirmed)));
+
+    const ctx = document.getElementById('ordersChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [
+                {
+                    label: 'Total Orders',
+                    data: totalOrdersData,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: 'Confirmed Orders',
+                    data: confirmedOrdersData,
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+
 <style>
-    .welcome-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    .welcome-header h1 {
+        font-size: 2.5rem;
+        color: #e65100;
+        margin-bottom: 0.5rem;
     }
 
-    .welcome-header {
-        text-align: center;
-        margin-bottom: 3rem;
+    .lead {
+        font-size: 1.25rem;
+        color: #6c757d;
     }
 
-        .welcome-header h1 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-header .lead {
-            font-size: 1.25rem;
-            color: var(--gray-500);
-        }
-
-    .quick-actions {
-        margin-bottom: 3rem;
+    .quick-actions h2,
+    .recent-activity h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: #343a40;
     }
-
-        .quick-actions h2 {
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            color: var(--gray-700);
-        }
 
     .action-grid {
         display: grid;
@@ -226,7 +174,7 @@
         padding: 1.5rem;
         text-align: center;
         text-decoration: none;
-        color: var(--gray-700);
+        color: #343a40;
         transition: all 0.3s ease;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
@@ -234,28 +182,12 @@
         .action-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            color: var(--primary);
+            color: #007bff;
         }
 
     .action-icon {
         font-size: 2.5rem;
         margin-bottom: 1rem;
-    }
-
-    .action-card h3 {
-        margin-bottom: 0.5rem;
-        font-size: 1.25rem;
-    }
-
-    .action-card p {
-        color: var(--gray-500);
-        margin: 0;
-    }
-
-    .recent-activity h2 {
-        font-size: 1.75rem;
-        margin-bottom: 1.5rem;
-        color: var(--gray-700);
     }
 
     .activity-list {
@@ -268,7 +200,7 @@
     .activity-item {
         display: flex;
         padding: 1rem;
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 1px solid #dee2e6;
         align-items: center;
     }
 
@@ -282,32 +214,50 @@
         flex-shrink: 0;
     }
 
-    .activity-content {
-        flex-grow: 1;
+    .activity-content p {
+        margin: 0;
     }
 
-        .activity-content p {
-            margin: 0;
-        }
-
     .text-muted {
-        color: var(--gray-500);
+        color: #6c757d;
         font-size: 0.875rem;
     }
 
-    @@media (max-width: 768px) {
-        .welcome-header h1 {
-            font-size: 2rem;
-        }
-
-        .action-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+   
+    .action-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    @@media (max-width: 480px) {
-        .action-grid {
-            grid-template-columns: 1fr;
-        }
     }
-</style> *@
+
+    .order-graph-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+
+    /* Orange themed border and hover effect */
+    .border-orange {
+        border: 2px solid #ff9800;
+        background-color: white;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .text-orange {
+        color: #ff9800;
+        transition: color 0.3s ease;
+    }
+
+    .hover-orange:hover {
+        background-color: #ff9800 !important;
+        color: white !important;
+    }
+
+        .hover-orange:hover .text-orange {
+            color: white !important;
+        }
+
+
+</style>
