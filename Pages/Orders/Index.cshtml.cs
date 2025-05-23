@@ -75,7 +75,7 @@ namespace FoodDeliveryAdminWebsite.Pages.Orders
                     return new OrderViewModel
                     {
                         Id = order.Key,
-                        UserEmail = orderData["userEmail"]?.ToString() ?? "Unknown", // ✅ read userEmail
+                        UserEmail = orderData["userName"]?.ToString() ?? "Unknown", // ✅ read userEmail
                         Status = orderData["status"]?.ToString() ?? "pending",
                         Total = double.TryParse(orderData["total"]?.ToString(), out double total) ? total : 0.0,
                         Timestamp = orderData["timestamp"] != null
