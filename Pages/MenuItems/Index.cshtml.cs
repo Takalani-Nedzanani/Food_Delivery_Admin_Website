@@ -1,8 +1,11 @@
+
 using FoodDeliveryAdminWebsite.services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Firebase.Database;
 using Firebase.Database.Query;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace FoodDeliveryAdminWebsite.Pages.MenuItems
 {
@@ -10,16 +13,24 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
     {
         private readonly FirebaseClient _firebase;
         private readonly ILogger<IndexModel> _logger;
+        private readonly StorageClient _storageClient;
+        private readonly string _bucketName = "cut-smartbanking-app.appspot.com";
 
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
+
+            // Initialize FirebaseClient
             _firebase = new FirebaseClient(
-                 "https://cut-smartbanking-app-default-rtdb.firebaseio.com",
+                "https://cut-smartbanking-app-default-rtdb.firebaseio.com",
                 new FirebaseOptions
                 {
                     AuthTokenAsyncFactory = () => Task.FromResult("7VavjcjNQ62DXnryR3OaZ4O1dJ5zoJfZB2E1zKi8")
                 });
+
+            // Initialize Google Cloud Storage client
+            var credential = GoogleCredential.FromFile("C:\\Users\\nedza\\OneDrive\\Desktop\\cut-smartbanking-app-firebase-adminsdk-888hh-d250e34f4c.json");
+            _storageClient = StorageClient.Create(credential);
         }
 
         public List<MenuItemViewModel> MenuItems { get; set; } = new List<MenuItemViewModel>();
@@ -40,14 +51,22 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                     .Child("menu")
                     .OnceAsync<Dictionary<string, object>>();
 
-                MenuItems = menuItems.Select(item => new MenuItemViewModel
+                MenuItems = menuItems.Select(item =>
                 {
-                    Id = item.Key,
-                    Name = item.Object["name"].ToString(),
-                    Description = item.Object["description"].ToString(),
-                    Price = Convert.ToDouble(item.Object["price"]),
-                    Category = item.Object["category"].ToString(),
-                    ImageUrl = item.Object.ContainsKey("imageUrl") ? item.Object["imageUrl"].ToString() : ""
+                    var imagePath = item.Object.ContainsKey("imageUrl") ? item.Object["imageUrl"].ToString() : "";
+                    var imageUrl = !string.IsNullOrEmpty(imagePath)
+                        ? $"https://firebasestorage.googleapis.com/v0/b/cut-smartbanking-app.appspot.com/o/{Uri.EscapeDataString(imagePath)}?alt=media"
+                        : "";
+
+                    return new MenuItemViewModel
+                    {
+                        Id = item.Key,
+                        Name = item.Object["name"].ToString(),
+                        Description = item.Object["description"].ToString(),
+                        Price = Convert.ToDouble(item.Object["price"]),
+                        Category = item.Object["category"].ToString(),
+                        ImageUrl = imageUrl
+                    };
                 })
                 .OrderBy(i => i.Category)
                 .ThenBy(i => i.Name)

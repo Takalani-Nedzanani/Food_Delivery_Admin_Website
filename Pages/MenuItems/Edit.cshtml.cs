@@ -62,9 +62,7 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
         public async Task<IActionResult> OnGetAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-            {
                 return NotFound();
-            }
 
             var menuItem = await _firebase
                 .Child("menu")
@@ -72,8 +70,14 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                 .OnceSingleAsync<Dictionary<string, object>>();
 
             if (menuItem == null)
-            {
                 return NotFound();
+
+            string? rawImagePath = menuItem.ContainsKey("imageUrl") ? menuItem["imageUrl"]?.ToString() : "";
+
+            // Convert storage path to full Firebase Storage URL if it exists
+            if (!string.IsNullOrEmpty(rawImagePath))
+            {
+                CurrentImageUrl = $"https://firebasestorage.googleapis.com/v0/b/cut-smartbanking-app.appspot.com/o/{Uri.EscapeDataString(rawImagePath)}?alt=media";
             }
 
             Input = new InputModel
@@ -83,35 +87,33 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                 Description = menuItem["description"]?.ToString(),
                 Price = Convert.ToDouble(menuItem["price"]),
                 Category = menuItem["category"]?.ToString(),
-                ImageUrl = menuItem.ContainsKey("imageUrl") ? menuItem["imageUrl"].ToString() : ""
+                ImageUrl = rawImagePath
             };
 
-            CurrentImageUrl = Input.ImageUrl;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            string imageUrl = Input.ImageUrl ?? "";
+            string imagePath = Input.ImageUrl ?? "";
 
             if (ImageFile != null)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "images/menu");
-                Directory.CreateDirectory(uploadsFolder);
-                var fileName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, fileName);
+                // Upload to Firebase Storage (ideally should be done using a Firebase SDK or external API)
+                string fileName = $"menu_items/{Guid.NewGuid()}{Path.GetExtension(ImageFile.FileName)}";
+                string localPath = Path.Combine(_env.WebRootPath, "temp", fileName);
+                Directory.CreateDirectory(Path.GetDirectoryName(localPath)!);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(localPath, FileMode.Create))
                 {
                     await ImageFile.CopyToAsync(stream);
                 }
 
-                imageUrl = $"/images/menu/{fileName}";
+                // Simulate Firebase Storage path saving (in real scenario, upload the file to Firebase Storage)
+                imagePath = fileName;
             }
 
             var updatedItem = new Dictionary<string, object>
@@ -120,7 +122,7 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                 { "description", Input.Description },
                 { "price", Input.Price },
                 { "category", Input.Category },
-                { "imageUrl", imageUrl }
+                { "imageUrl", imagePath }
             };
 
             await _firebase
@@ -132,5 +134,4 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
         }
     }
 }
-
 
