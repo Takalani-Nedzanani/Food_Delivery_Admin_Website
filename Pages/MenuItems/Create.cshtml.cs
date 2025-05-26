@@ -1,24 +1,55 @@
-using FoodDeliveryAdminWebsite.services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Firebase.Database;
 using Firebase.Database.Query;
+using Google.Cloud.Storage.V1;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using System.Linq;
+using Google.Apis.Auth.OAuth2;
+using FirebaseAdmin;
 
 namespace FoodDeliveryAdminWebsite.Pages.MenuItems
 {
     public class CreateModel : PageModel
     {
         private readonly FirebaseClient _firebase;
+        private readonly StorageClient _storageClient;
+        private readonly string _bucketName;
+        private readonly string _adminToken;
 
-        public CreateModel()
+        public CreateModel(IConfiguration configuration)
         {
+            _adminToken = configuration["Firebase:AdminToken"];
+            _bucketName = "cut-smartbanking-app.appspot.com";
+
+            // Step 1: Initialize FirebaseApp only if not already initialized
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = GoogleCredential.FromFile("C:\\Users\\nedza\\OneDrive\\Desktop\\cut-smartbanking-app-firebase-adminsdk-888hh-d250e34f4c.json"),
+                    ProjectId = "cut-smartbanking-app",
+                });
+            }
+
+            // Step 2: Create the Firebase Realtime Database client
             _firebase = new FirebaseClient(
-                 "https://cut-smartbanking-app-default-rtdb.firebaseio.com",
+                "https://cut-smartbanking-app-default-rtdb.firebaseio.com/",
                 new FirebaseOptions
                 {
-                    AuthTokenAsyncFactory = () => Task.FromResult("7VavjcjNQ62DXnryR3OaZ4O1dJ5zoJfZB2E1zKi8")
+                    AuthTokenAsyncFactory = () => Task.FromResult(_adminToken)
                 });
+
+            // Step 3: Create Google Cloud Storage client
+            var credential = GoogleCredential.FromFile("C:\\Users\\nedza\\OneDrive\\Desktop\\cut-smartbanking-app-firebase-adminsdk-888hh-d250e34f4c.json");
+            _storageClient = StorageClient.Create(credential);
         }
 
         [BindProperty]
@@ -45,8 +76,8 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
             [Required]
             public string Category { get; set; }
 
-            [Url]
-            public string ImageUrl { get; set; }
+            [Required(ErrorMessage = "Please upload an image file.")]
+            public IFormFile ImageFile { get; set; }
         }
 
         public IActionResult OnGet()
@@ -63,25 +94,62 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
 
             try
             {
+                // Upload image to Firebase Storage
+                string imagePath = await UploadImageToFirebase(Input.ImageFile);
+
+                // Save item to Firebase Realtime Database
                 var newItem = new Dictionary<string, object>
                 {
                     { "name", Input.Name },
                     { "description", Input.Description },
                     { "price", Input.Price },
                     { "category", Input.Category },
-                    { "imageUrl", Input.ImageUrl }
+                    { "imageUrl", imagePath },  // Just the path, not full URL
+                    { "likes", 0 },
+                    { "createdAt", DateTime.UtcNow.ToString("o") }
                 };
 
-                await _firebase
-                    .Child("menu")
-                    .PostAsync(newItem);
+                await _firebase.Child("menu").PostAsync(newItem);
 
-                return RedirectToPage("../Index");
+                return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error adding menu item: {ex.Message}");
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
                 return Page();
+            }
+        }
+
+        private async Task<string> UploadImageToFirebase(IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                throw new ArgumentException("Image file is empty");
+            }
+
+            var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
+            if (!validExtensions.Contains(fileExtension))
+            {
+                throw new ArgumentException("Only JPG, PNG, and GIF images are allowed");
+            }
+
+            var fileName = $"menu_items/{Guid.NewGuid()}{fileExtension}";
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await imageFile.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                await _storageClient.UploadObjectAsync(
+                    bucket: _bucketName,
+                    objectName: fileName,
+                    contentType: imageFile.ContentType,
+                    source: memoryStream
+                );
+
+                // Return only the path so Flutter can fetch the full URL using Firebase SDK
+                return fileName;
             }
         }
     }

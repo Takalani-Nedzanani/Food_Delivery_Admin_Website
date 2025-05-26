@@ -1,4 +1,6 @@
-﻿@page
+﻿
+
+    @page
 @model FoodDeliveryAdminWebsite.Pages.MenuItems.CreateModel
 @{
     ViewData["Title"] = "Create Menu Item";
@@ -18,7 +20,6 @@
     .card-glass {
         background-color: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
@@ -52,11 +53,8 @@
             background-color: #e65100;
         }
 
-
-
     .custom-select-dark option {
         background-color: rgba(255, 255, 255, 0.2);
-        
         color: #fff;
     }
 
@@ -65,8 +63,6 @@
         border-color: #e65100;
         color: #fff;
     }
-
-
 </style>
 
 <div class="d-flex justify-content-center align-items-center vh-100 bg-overlay-half">
@@ -76,7 +72,7 @@
             <p class="text-muted mb-0">Fill in the details below</p>
         </div>
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
 
             <div class="mb-3">
@@ -99,19 +95,17 @@
 
             <div class="mb-3">
                 <label asp-for="Input.Category" class="form-label fw-semibold">Category</label>
-                <select asp-for="Input.Category"
-                        class="form-select rounded-pill px-3 bg-black text-white custom-select-dark"
+                <select asp-for="Input.Category" class="form-select rounded-pill px-3 bg-black text-white custom-select-dark"
                         asp-items="@(new SelectList(Model.Categories))">
                     <option value="">-- Select Category --</option>
                 </select>
                 <span asp-validation-for="Input.Category" class="text-danger small"></span>
             </div>
 
-
             <div class="mb-4">
-                <label asp-for="Input.ImageUrl" class="form-label fw-semibold">Image URL</label>
-                <input asp-for="Input.ImageUrl" class="form-control rounded-pill px-3" placeholder="https://example.com/image.jpg" />
-                <span asp-validation-for="Input.ImageUrl" class="text-danger small"></span>
+                <label class="form-label fw-semibold">Upload Image</label>
+                <input asp-for="Input.ImageFile" class="form-control rounded-pill px-3" type="file" />
+                <span asp-validation-for="Input.ImageFile" class="text-danger small"></span>
             </div>
 
             <div class="d-grid mb-2">
@@ -120,29 +114,16 @@
                 </button>
             </div>
             <div class="text-center">
-                <a asp-page="../Index" class="btn btn-outline-light rounded-pill fw-semibold py-2" style="transition: 0.3s;">
+                <a asp-page="../Index" class="btn btn-outline-light rounded-pill fw-semibold py-2">
                     Cancel
                 </a>
-
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+   @*  @await Html.RenderPartialAsync("_ValidationScriptsPartial") *@
 }
-
-
-
-
-
-
-
-
-
-
 
 

@@ -1,4 +1,6 @@
-using FoodDeliveryAdminWebsite.services;
+
+
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Firebase.Database;
@@ -10,19 +12,26 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
     public class EditModel : PageModel
     {
         private readonly FirebaseClient _firebase;
+        private readonly IWebHostEnvironment _env;
 
-        public EditModel()
+        public EditModel(IWebHostEnvironment env)
         {
             _firebase = new FirebaseClient(
-                 "https://cut-smartbanking-app-default-rtdb.firebaseio.com",
+                "https://cut-smartbanking-app-default-rtdb.firebaseio.com",
                 new FirebaseOptions
                 {
                     AuthTokenAsyncFactory = () => Task.FromResult("7VavjcjNQ62DXnryR3OaZ4O1dJ5zoJfZB2E1zKi8")
                 });
+            _env = env;
         }
 
         [BindProperty]
         public InputModel Input { get; set; } = new InputModel();
+
+        [BindProperty]
+        public IFormFile? ImageFile { get; set; }
+
+        public string? CurrentImageUrl { get; set; }
 
         public List<string> Categories { get; } = new List<string>
         {
@@ -47,8 +56,7 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
             [Required]
             public string Category { get; set; }
 
-            [Url]
-            public string ImageUrl { get; set; }
+            public string? ImageUrl { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync(string id)
@@ -58,35 +66,28 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                 return NotFound();
             }
 
-            try
+            var menuItem = await _firebase
+                .Child("menu")
+                .Child(id)
+                .OnceSingleAsync<Dictionary<string, object>>();
+
+            if (menuItem == null)
             {
-                var menuItem = await _firebase
-                    .Child("menu")
-                    .Child(id)
-                    .OnceSingleAsync<Dictionary<string, object>>();
-
-                if (menuItem == null)
-                {
-                    return NotFound();
-                }
-
-                Input = new InputModel
-                {
-                    Id = id,
-                    Name = menuItem["name"].ToString(),
-                    Description = menuItem["description"].ToString(),
-                    Price = Convert.ToDouble(menuItem["price"]),
-                    Category = menuItem["category"].ToString(),
-                    ImageUrl = menuItem.ContainsKey("imageUrl") ? menuItem["imageUrl"].ToString() : ""
-                };
-
-                return Page();
+                return NotFound();
             }
-            catch (Exception ex)
+
+            Input = new InputModel
             {
-                ModelState.AddModelError(string.Empty, $"Error loading menu item: {ex.Message}");
-                return Page();
-            }
+                Id = id,
+                Name = menuItem["name"]?.ToString(),
+                Description = menuItem["description"]?.ToString(),
+                Price = Convert.ToDouble(menuItem["price"]),
+                Category = menuItem["category"]?.ToString(),
+                ImageUrl = menuItem.ContainsKey("imageUrl") ? menuItem["imageUrl"].ToString() : ""
+            };
+
+            CurrentImageUrl = Input.ImageUrl;
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -96,29 +97,40 @@ namespace FoodDeliveryAdminWebsite.Pages.MenuItems
                 return Page();
             }
 
-            try
+            string imageUrl = Input.ImageUrl ?? "";
+
+            if (ImageFile != null)
             {
-                var updatedItem = new Dictionary<string, object>
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "images/menu");
+                Directory.CreateDirectory(uploadsFolder);
+                var fileName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    { "name", Input.Name },
-                    { "description", Input.Description },
-                    { "price", Input.Price },
-                    { "category", Input.Category },
-                    { "imageUrl", Input.ImageUrl }
-                };
+                    await ImageFile.CopyToAsync(stream);
+                }
 
-                await _firebase
-                    .Child("menu")
-                    .Child(Input.Id)
-                    .PutAsync(updatedItem);
-
-                return RedirectToPage("../Index");
+                imageUrl = $"/images/menu/{fileName}";
             }
-            catch (Exception ex)
+
+            var updatedItem = new Dictionary<string, object>
             {
-                ModelState.AddModelError(string.Empty, $"Error updating menu item: {ex.Message}");
-                return Page();
-            }
+                { "name", Input.Name },
+                { "description", Input.Description },
+                { "price", Input.Price },
+                { "category", Input.Category },
+                { "imageUrl", imageUrl }
+            };
+
+            await _firebase
+                .Child("menu")
+                .Child(Input.Id)
+                .PutAsync(updatedItem);
+
+            return RedirectToPage("../Index");
         }
     }
 }
+
+
